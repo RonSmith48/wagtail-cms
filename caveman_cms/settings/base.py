@@ -12,13 +12,18 @@ ENV = os.getenv('ENV', 'dev')
 dotenv_path = BASE_DIR / f'.env.{ENV}'
 load_dotenv(dotenv_path)
 
+AUTH_SERVER_URL = os.getenv("AUTH_SERVER_URL", "http://localhost:8000")
+
 # ─────── Security & Debug ───────
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 # If you want to override Wagtail’s admin login URL, you can also set:
-# LOGIN_URL = "/admin/login/"
+AUTHENTICATION_BACKENDS = [
+    'users.auth_backends.RemoteAuthBackend',
+]
+
 
 # ─────── Applications ───────
 INSTALLED_APPS = [
@@ -134,12 +139,12 @@ else:
     }
 
 # ─────── Auth & JWT ───────
-#AUTH_USER_MODEL = "users.RemoteUser"  # match backend
+AUTH_USER_MODEL = "users.RemoteUser"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         # Reuse your custom fetch‐and‐create logic if you have it, e.g.:
-        "common.authentication.JWTAuthenticationFetchUser",
+        "users.authentication.JWTAuthenticationFetchUser",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -227,6 +232,8 @@ WAGTAILDOCS_EXTENSIONS = [
     "xlsx",
     "zip",
 ]
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # If you want to override default login redirect:
 # LOGIN_URL = "/admin/login/"
