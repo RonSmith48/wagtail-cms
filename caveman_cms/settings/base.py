@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "home",
     "search",
     "helpdocs",
+    "api",
 
     # Core Wagtail apps
     "wagtail.contrib.forms",
