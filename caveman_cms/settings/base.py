@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # ─────── Build paths ───────
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = PROJECT_DIR.parent
-ENV = os.getenv('ENV', 'dev') 
+ENV = os.getenv('ENV', 'dev')
 dotenv_path = BASE_DIR / f'.env.{ENV}'
 load_dotenv(dotenv_path)
 
@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     "home",
     "search",
     "helpdocs",
-    "api",
+    "approval",
 
     # Core Wagtail apps
     "wagtail.contrib.forms",
@@ -119,7 +119,7 @@ if CMS_DB_ENGINE == 'sqlite':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / os.getenv('CMS_DB_NAME', 'db.sqlite3'),
+            'NAME': BASE_DIR / os.getenv('CMS_DB_NAME', 'wagtail.db'),
         }
     }
 else:
@@ -219,7 +219,8 @@ WAGTAILSEARCH_BACKENDS = {
     }
 }
 # Base URL in emails/redirects. Use your actual dev or prod host.
-WAGTAILADMIN_BASE_URL = os.getenv("WAGTAILADMIN_BASE_URL", "http://localhost:8002")
+WAGTAILADMIN_BASE_URL = os.getenv(
+    "WAGTAILADMIN_BASE_URL", "http://localhost:8002")
 
 WAGTAILDOCS_EXTENSIONS = [
     "csv",
