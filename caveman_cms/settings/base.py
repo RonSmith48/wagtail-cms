@@ -8,9 +8,7 @@ from dotenv import load_dotenv
 # ─────── Build paths ───────
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = PROJECT_DIR.parent
-ENV = os.getenv('ENV', 'dev')
-dotenv_path = BASE_DIR / f'.env.{ENV}'
-load_dotenv(dotenv_path)
+load_dotenv(BASE_DIR / ".env")
 
 AUTH_SERVER_URL = os.getenv("AUTH_SERVER_URL", "http://localhost:8000")
 
@@ -114,28 +112,30 @@ WSGI_APPLICATION = "caveman_cms.wsgi.application"
 
 # ─────── Database ───────
 # (Keep the same SQLite/MSSQL switch if you want, or lock to SQLite for Wagtail dev.)
-CMS_DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite')
-if CMS_DB_ENGINE == 'sqlite':
+DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite')
+
+if DB_ENGINE == 'django.db.backends.sqlite3':
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / os.getenv('CMS_DB_NAME', 'wagtail.db'),
+            'ENGINE': DB_ENGINE,
+            'NAME': BASE_DIR / os.getenv('CMS_DB_NAME', 'backend.db'),
         }
     }
 else:
     DATABASES = {
         'default': {
-            'ENGINE': CMS_DB_ENGINE,
-            'NAME':     os.getenv('CMS_DB_NAME'),
-            'USER':     os.getenv('CMS_DB_USER'),
-            'PASSWORD': os.getenv('CMS_DB_PASSWORD'),
-            'HOST':     os.getenv('CMS_DB_HOST'),
-            'PORT':     os.getenv('CMS_DB_PORT'),
+            'ENGINE': DB_ENGINE,
+            'NAME': os.getenv('CMS_DB_NAME', 'caveman'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),
+            # Only include OPTIONS if using MSSQL
             'OPTIONS': {
-                'driver': os.getenv('CMS_DB_DRIVER', 'ODBC Driver 17 for SQL Server'),
+                'driver': 'ODBC Driver 17 for SQL Server',
                 'unicode_results': True,
                 'extra_params': 'TrustServerCertificate=yes;Encrypt=no;charset=utf8',
-            } if CMS_DB_ENGINE == 'mssql' else {},
+            } if 'mssql' in DB_ENGINE else {}
         }
     }
 
@@ -195,6 +195,7 @@ STATIC_URL = "/static/"
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
